@@ -40,6 +40,7 @@ function dragula (initialContainers, options) {
   if (o.direction === void 0) { o.direction = 'vertical'; }
   if (o.ignoreInputTextSelection === void 0) { o.ignoreInputTextSelection = true; }
   if (o.mirrorContainer === void 0) { o.mirrorContainer = body; }
+  if (o.documentElement === void 0) { o.documentElement = documentElement; }
 
   var drake = emitter({
     containers: o.containers,
@@ -65,19 +66,19 @@ function dragula (initialContainers, options) {
 
   function events (remove) {
     var op = remove ? 'remove' : 'add';
-    touchy(documentElement, op, 'mousedown', grab);
-    touchy(documentElement, op, 'mouseup', release);
+    touchy(o.documentElement, op, 'mousedown', grab);
+    touchy(o.documentElement, op, 'mouseup', release);
   }
 
   function eventualMovements (remove) {
     var op = remove ? 'remove' : 'add';
-    touchy(documentElement, op, 'mousemove', startBecauseMouseMoved);
+    touchy(o.documentElement, op, 'mousemove', startBecauseMouseMoved);
   }
 
   function movements (remove) {
     var op = remove ? 'remove' : 'add';
-    crossvent[op](documentElement, 'selectstart', preventGrabbed); // IE8
-    crossvent[op](documentElement, 'click', preventGrabbed);
+    crossvent[op](o.documentElement, 'selectstart', preventGrabbed); // IE8
+    crossvent[op](o.documentElement, 'click', preventGrabbed);
   }
 
   function destroy () {
@@ -424,7 +425,7 @@ function dragula (initialContainers, options) {
     classes.rm(_mirror, 'gu-transit');
     classes.add(_mirror, 'gu-mirror');
     o.mirrorContainer.appendChild(_mirror);
-    touchy(documentElement, 'add', 'mousemove', drag);
+    touchy(o.documentElement, 'add', 'mousemove', drag);
     classes.add(o.mirrorContainer, 'gu-unselectable');
     drake.emit('cloned', _mirror, _item, 'mirror');
   }
@@ -432,7 +433,7 @@ function dragula (initialContainers, options) {
   function removeMirrorImage () {
     if (_mirror) {
       classes.rm(o.mirrorContainer, 'gu-unselectable');
-      touchy(documentElement, 'remove', 'mousemove', drag);
+      touchy(o.documentElement, 'remove', 'mousemove', drag);
       getParent(_mirror).removeChild(_mirror);
       _mirror = null;
     }
@@ -443,7 +444,7 @@ function dragula (initialContainers, options) {
     while (immediate !== dropTarget && getParent(immediate) !== dropTarget) {
       immediate = getParent(immediate);
     }
-    if (immediate === documentElement) {
+    if (immediate === o.documentElement) {
       return null;
     }
     return immediate;
